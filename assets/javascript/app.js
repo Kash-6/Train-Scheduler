@@ -1,170 +1,114 @@
-$(document).ready(function () {
-var options = [
-	{
-		question: "Which team won the very first Superbowl?", 
-		choice: ["San Francisco 49ers", "Green Bay Packers", "Buffalo Bills", "Kansas City Chiefs"],
-		answer: 1,
-		photo: "assets/images/Greenbay.png"
-	 },
-	 {
-	 	question: "Which quarterback has the most passing yards in NFL history?", 
-		choice: ["Drew Brees", "Dan Marino", "Tom Brady", "Joe Montana"],
-		answer: 0,
-		photo: "assets/images/brees.jpg"
-	 }, 
-	 {
-	 	question: "What is the record for passing touchdowns in a season?", 
-		choice: ["49", "48", "55", "50" ],
-		answer: 2,
-		photo: "assets/images/peyton.jpg"
-	}, 
-	{
-		question: "Who won the 2017-2018 Superbowl (Superbowl 52)?", 
-		choice: ["New England Patriots", "Denver Broncos", "Philadelphia Eagles", "Seattle Seahawks" ],
-		answer: 2,
-		photo: "assets/images/eagles.png"
-	}, 
-	{
-		question: "Which head coach has the most wins in NFL history?", 
-		choice: ["Andy Reid", "Mike Ditka", "Bill Belichick", "Don Shula" ],
-		answer: 3,
-		photo: "assets/images/shula.jpg"
-	}, 
-	{
-		question: "Which franchise has the most Superbowl wins?", 
-		choice: ["Dallas Cowboys", "Pittsburgh Steelers", "San Francisco 49ers", "New England Patriots" ],
-		answer: 1,
-		photo: "assets/images/steelers.jpg"
-	}]; 
+var trainName = "";
+var trainDestination = "";
+var trainTime = "";
+var trainFrequency = "";
+var nextArrival = "";
+var minutesAway = "";
 
 
-var correctCount = 0;
-var wrongCount = 0;
-var unanswerCount = 0;
-var timer = 30;
-var intervalId;
-var userGuess ="";
-var running = false;
-var qCount = options.length;
-var pick;
-var index;
-var newArray = [];
-var holder = [];
+var newTrain = $("#train-name");
+var newTrainDestination = $("#train-destination");
+var newTrainTime = $("#train-time").mask("00:00");
+var newTimeFreq = $("#time-freq").mask("00");
 
 
 
-$("#reset").hide();
-
-$("#start").on("click", function () {
-		$("#start").hide();
-		displayQuestion();
-		runTimer();
-		for(var i = 0; i < options.length; i++) {
-	holder.push(options[i]);
-}
-	})
-
-function runTimer(){
-	if (!running) {
-	intervalId = setInterval(decrement, 1000); 
-	running = true;
-	}
-}
-
-function decrement() {
-	$("#timeleft").html("<h3>Time remaining: " + timer + "</h3>");
-	timer --;
-
-	if (timer === 0) {
-		unanswerCount++;
-		stop();
-		$("#answerblock").html("<p>You ran out of time! The correct answer is: " + pick.choice[pick.answer] + "</p>");
-		hidepicture();
-	}	
-}
-
-function stop() {
-	running = false;
-	clearInterval(intervalId);
-}
-
-function displayQuestion() {
-	index = Math.floor(Math.random()*options.length);
-	pick = options[index];
-
-		$("#questionblock").html("<h2>" + pick.question + "</h2>");
-		for(var i = 0; i < pick.choice.length; i++) {
-			var userChoice = $("<div>");
-			userChoice.addClass("answerchoice");
-			userChoice.html(pick.choice[i]);
-			userChoice.attr("data-guessvalue", i);
-			$("#answerblock").append(userChoice);
-}
+var config = {
+    apiKey: "AIzaSyBTUzVgu0mbf6Oao0-Kdi4aOa38bG7GQWo",
+    authDomain: "train-schedule-85515.firebaseapp.com",
+    databaseURL: "https://train-schedule-85515.firebaseio.com",
+    projectId: "train-schedule-85515",
+    storageBucket: "",
+    messagingSenderId: "503324976963"
+  };
 
 
+firebase.initializeApp(config);
 
 
-$(".answerchoice").on("click", function () {
-	
-	userGuess = parseInt($(this).attr("data-guessvalue"));
+var database = firebase.database();
 
-	if (userGuess === pick.answer) {
-		stop();
-		correctCount++;
-		userGuess="";
-		$("#answerblock").html("<p>Correct!</p>");
-		hidepicture();
+database.ref("/trains").on("child_added", function(snapshot) {
 
-	} else {
-		stop();
-		wrongCount++;
-		userGuess="";
-		$("#answerblock").html("<p>Wrong! The correct answer is: " + pick.choice[pick.answer] + "</p>");
-		hidepicture();
-	}
-})
-}
+    var trainDiff = 0;
+    var trainRemainder = 0;
+    var minutesTillArrival = "";
+    var nextTrainTime = "";
+    var frequency = snapshot.val().frequency;
 
+    
+    trainDiff = moment().diff(moment.unix(snapshot.val().time), "minutes");
 
-function hidepicture () {
-	$("#answerblock").append("<img src=" + pick.photo + ">");
-	newArray.push(pick);
-	options.splice(index,1);
+    
+    trainRemainder = trainDiff % frequency;
 
-	var hidpic = setTimeout(function() {
-		$("#answerblock").empty();
-		timer= 30;
-	
-	if ((wrongCount + correctCount + unanswerCount) === qCount) {
-		$("#questionblock").empty();
-		$("#questionblock").html("<h3>Game Over!  Here's how you did: </h3>");
-		$("#answerblock").append("<h4> Correct: " + correctCount + "</h4>" );
-		$("#answerblock").append("<h4> Incorrect: " + wrongCount + "</h4>" );
-		$("#answerblock").append("<h4> Unanswered: " + unanswerCount + "</h4>" );
-		$("#reset").show();
-		correctCount = 0;
-		wrongCount = 0;
-		unanswerCount = 0;
+    
+    minutesTillArrival = frequency - trainRemainder;
 
-	} else {
-		runTimer();
-		displayQuestion();
+    
+    nextTrainTime = moment().add(minutesTillArrival, "m").format("hh:mm A");
 
-	}
-	}, 3000);
+    
+    $("#table-data").append(
+        "<tr><td>" + snapshot.val().name + "</td>" +
+        "<td>" + snapshot.val().destination + "</td>" +
+        "<td>" + frequency + "</td>" +
+        "<td>" + minutesTillArrival + "</td>" +
+        "<td>" + nextTrainTime + "  " + "<a><span class='glyphicon glyphicon-remove icon-hidden' aria-hidden='true'></span></a>" + "</td></tr>"
+    );
+
+    $("span").hide();
+});
 
 
-}
+var storeInputs = function(event) {
+    
+    event.preventDefault();
 
-$("#reset").on("click", function() {
-	$("#reset").hide();
-	$("#answerblock").empty();
-	$("#questionblock").empty();
-	for(var i = 0; i < holder.length; i++) {
-		options.push(holder[i]);
-	}
-	runTimer();
-	displayQuestion();
+    
+    trainName = newTrain.val().trim();
+    trainDestination = newTrainDestination.val().trim();
+    trainTime = moment(newTrainTime.val().trim(), "HH:mm").subtract(1, "years").format("X");
+    trainFrequency = newTimeFreq.val().trim();
 
-})
-})
+    
+    database.ref("/trains").push({
+        name: trainName,
+        destination: trainDestination,
+        time: trainTime,
+        frequency: trainFrequency,
+        nextArrival: nextArrival,
+        minutesAway: minutesAway,
+        date_added: firebase.database.ServerValue.TIMESTAMP
+    });
+
+    
+    newTrain.val("");
+    newTrainDestination.val("");
+    newTrainTime.val("");
+    newTimeFreq.val("");
+};
+
+
+$("#btn-add").on("click", function(event) {
+    
+    if (newTrain.val().length === 0 || newTrainDestination.val().length === 0 || newTrainTime.val().length === 0 || newTimeFreq === 0) {
+        alert("Please Fill All Required Fields");
+    } else {
+        
+        storeInputs(event);
+    }
+});
+
+
+$('form').on("keypress", function(event) {
+    if (event.which === 13) {
+        
+        if (newTrain.val().length === 0 || newTrainDestination.val().length === 0 || newTrainTime.val().length === 0 || newTimeFreq === 0) {
+            alert("Please Fill All Required Fields");
+        } else {
+            
+            storeInputs(event);
+        }
+    }
+});

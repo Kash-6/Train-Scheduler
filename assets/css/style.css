@@ -1,74 +1,71 @@
-#start {
-  background-color: blue;
-}
-
-.answerchoice {
-	border: 3px solid black;
-  border-radius: 5%;
-	width: 40%;
-	color: white;
-  text-align: center;
-  margin: 10px auto;
-  font-size: 20px;
-  background-color: red;
-
-}
-
-img {
-  max-height: 250px;
-  width: auto;
-}
-
-#answerblock {
-  text-align: center;
-
-}
-
-#questionblock {
-  text-align: center;
-  font-weight: bold;
-}
-
-#reset {
-  visibility: visible;
-}
-
 body {
-  background-image: url("../images/nfl.jpg");
-  background-size: cover;
-  
+    background-image: url("../images/train-station.jpg");
 }
 
-h1 {
-  text-align: center;
-  color: white;
-  font-weight: bolder;
-  padding: 20px;
-  font-size: 45px;
+#head-container {
+    margin-top: 1%;
 }
 
-p {
-  margin: 10px;
-  font-weight: bold;
-  color: red;
-  font-size: 30px;
+#table-container {
+    background-color: rgba(190, 190, 190, 0.8);
+    border: 2px solid black;
+    padding: 0px 0px 10px 0px;
 }
 
-h2, h3, h4 {
-  margin: 30px;
-  font-weight: bold;
+#head {
+    text-align: center;
+    background-color: #141f3d;
+    color: white;
+    padding: 2%;
 }
 
-.wrapper {
-  margin: 10px auto;
-  background-color: rgba(190, 190, 190, 0.945);
-  border: 4px solid black;
-  height: 550px;
-  width: 40%;
-  text-align: center;
+.panel-body {
+    margin: 5px 10px;
 }
 
-.btn {
-  position: relative;
-  bottom: -150px;
+.panel-custom {
+    background-color: #141f3d !important;
+    color: white !important;
+    padding: 5px 10px;
+    font-weight: bold;
+}
+
+label {
+    font-weight: bold;
+}
+
+table {
+    margin: 0 auto;
+}
+
+th {
+    margin: 1% 1% 0 1%;
+    padding: 3% 3% 0 3%;
+    width: 1%;
+}
+
+hr {
+    margin: 1%;
+}
+
+td {
+    margin: 1% 1% 0 1%;
+    padding: 3% 3% 0 3%;
+    width: 1%;
+    font-weight: bold;
+}
+
+h1 img {
+    width: 5%;
+    padding-bottom: 1%;
+}
+
+.glyphicon-remove {
+    color: darkred;
+    padding-left: 15%;
+}
+
+.form-control:focus {
+    border-color: #141f3d;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px #141f3d;
 }

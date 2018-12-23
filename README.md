@@ -1,11 +1,3 @@
-# TriviaGame
+# Train Schedule
 
-### Overview
-
-Created a Trivia game using JavaScript for the logic and jQuery to manipulate HTML. 10 questions randomly generated with countdown timer for answer.  App gives correct answer with gif/image after user guess.  After 10 questions, app will display score with the option to restart the game. 
-
-### Technologies Utilized 
-
-HTML5 CSS3 JavaScript JQuery
-
-https://lindsfisch.github.io/TriviaGame/
+This is a table for a train schedule. It displays the train name, destination, frequency in minutes, minutes away, and the time of its next arrival. A form is located at the bottom allowing users to add new trains to the table by using a firebase database. Each train will be dynamically added to the list and keep track of the current time to give accurate values for how far away the train is and the exact time of its next arrival.
